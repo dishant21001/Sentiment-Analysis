@@ -386,6 +386,205 @@ plot.</p>
 <p>feedback_data &lt;- read.csv(“D:/iphone.csv”, stringsAsFactors =
 FALSE)</p>
 </div>
+<div id="display-the-first-few-rows-to-understand-its-structure" class="section level1">
+<h1>Display the first few rows to understand its structure</h1>
+<p>head(feedback_data)</p>
+</div>
+<div id="check-the-structure-of-the-dataset" class="section level1">
+<h1>Check the structure of the dataset</h1>
+<p>str(feedback_data)</p>
+</div>
+<div id="check-summary-statistics-of-each-column" class="section level1">
+<h1>Check summary statistics of each column</h1>
+<p>summary(feedback_data)</p>
+</div>
+<div id="check-for-any-missing-values-in-the-dataset" class="section level1">
+<h1>Check for any missing values in the dataset</h1>
+<p>colSums(is.na(feedback_data)</p>
+</div>
+<div id="display-column-names" class="section level1">
+<h1>Display column names</h1>
+<p>colnames(feedback_data)</p>
+</div>
+<div id="select-relevant-columns" class="section level1">
+<h1>Select relevant columns</h1>
+<p>filtered_data &lt;- feedback_data[, c(“reviewDescription”,
+“ratingScore”, “reviewTitle”, “country”, “isVerified”)]</p>
+</div>
+<div id="rename-columns-for-easier-handling" class="section level1">
+<h1>Rename columns for easier handling</h1>
+<p>colnames(filtered_data) &lt;- c(“ReviewText”, “Rating”, “Title”,
+“Country”, “IsVerified”)</p>
+</div>
+<div id="install-required-packages" class="section level1">
+<h1>Install required packages</h1>
+<p>install.packages(“tm”) install.packages(“tokenizers”)</p>
+</div>
+<div id="load-necessary-libraries-for-text-processing" class="section level1">
+<h1>Load necessary libraries for text processing</h1>
+<p>library(tm) # For text cleaning library(tokenizers) # For
+tokenization</p>
+</div>
+<div id="convert-to-lowercase" class="section level1">
+<h1>Convert to lowercase</h1>
+<p>filtered_data<span class="math inline">\(CleanedText &lt;-
+tolower(filtered_data\)</span>ReviewText)</p>
+</div>
+<div id="remove-punctuation" class="section level1">
+<h1>Remove punctuation</h1>
+<p>filtered_data<span class="math inline">\(CleanedText &lt;-
+removePunctuation(filtered_data\)</span>CleanedText)</p>
+</div>
+<div id="remove-stop-words" class="section level1">
+<h1>Remove stop words</h1>
+<p>filtered_data<span class="math inline">\(CleanedText &lt;-
+removeWords(filtered_data\)</span>CleanedText, stopwords(“en”))</p>
+</div>
+<div id="tokenize-the-text" class="section level1">
+<h1>Tokenize the text</h1>
+<p>filtered_data<span class="math inline">\(Tokens &lt;-
+tokenize_words(filtered_data\)</span>CleanedText)</p>
+</div>
+<div id="install-the-syuzhet-package-if-not-already-installed" class="section level1">
+<h1>Install the syuzhet package if not already installed</h1>
+<p>install.packages(“syuzhet”)</p>
+</div>
+<div id="load-the-syuzhet-library" class="section level1">
+<h1>Load the syuzhet library</h1>
+<p>library(syuzhet)</p>
+</div>
+<div id="calculate-sentiment-scores-for-each-review" class="section level1">
+<h1>Calculate sentiment scores for each review</h1>
+<p>filtered_data<span class="math inline">\(SentimentScore &lt;-
+get_sentiment(filtered_data\)</span>CleanedText, method = “syuzhet”)</p>
+</div>
+<div id="sentiment-scores-alongside-the-review-text" class="section level1">
+<h1>sentiment scores alongside the review text</h1>
+<p>head(filtered_data[, c(“ReviewText”, “SentimentScore”)])</p>
+</div>
+<div id="filter-for-negative-reviews-based-on-sentiment-score" class="section level1">
+<h1>Filter for negative reviews based on sentiment score</h1>
+<p>negative_reviews &lt;- filtered_data[filtered_data$SentimentScore
+&lt; 0, ]</p>
+</div>
+<div id="view-a-sample-of-the-negative-reviews" class="section level1">
+<h1>View a sample of the negative reviews</h1>
+<p>head(negative_reviews[, c(“ReviewText”, “SentimentScore”)])</p>
+</div>
+<div id="combine-all-negative-reviews-into-a-single-text-for-frequency-analysis" class="section level1">
+<h1>Combine all negative reviews into a single text for frequency
+analysis</h1>
+<p>negative_text &lt;- paste(negative_reviews$ReviewText, collapse = ”
+“)</p>
+</div>
+<div id="tokenize-and-analyze-the-frequency-of-words" class="section level1">
+<h1>Tokenize and analyze the frequency of words</h1>
+<p>library(dplyr)</p>
+</div>
+<div id="split-the-text-into-individual-words" class="section level1">
+<h1>Split the text into individual words</h1>
+<p>negative_words &lt;- unlist(strsplit(negative_text, ” “))</p>
+</div>
+<div id="convert-to-a-data-frame-to-count-word-frequency" class="section level1">
+<h1>Convert to a data frame to count word frequency</h1>
+<p>word_freq &lt;- as.data.frame(table(negative_words))</p>
+</div>
+<div id="filter-out-short-words-and-common-stop-words-for-clearer-themes" class="section level1">
+<h1>Filter out short words and common stop words for clearer themes</h1>
+<p>word_freq &lt;- word_freq %&gt;%
+filter(nchar(as.character(negative_words)) &gt; 3) %&gt;% # Keep words
+longer than 3 characters arrange(desc(Freq)) # Sort by frequency</p>
+</div>
+<div id="display-top-10-frequent-words-to-identify-potential-themes" class="section level1">
+<h1>Display top 10 frequent words to identify potential themes</h1>
+<p>head(word_freq, 10)</p>
+</div>
+<div id="load-necessary-library-for-visualization" class="section level1">
+<h1>Load necessary library for visualization</h1>
+<p>install.packages(“ggplot2”) library(ggplot2)</p>
+</div>
+<div id="plot-sentiment-score-distribution-with-lighter-colors-for-black-background" class="section level1">
+<h1>Plot sentiment score distribution with lighter colors for black
+background</h1>
+<p>ggplot(filtered_data, aes(x = SentimentScore)) +
+geom_histogram(binwidth = 0.5, fill = “lightblue”, color = “white”) +
+labs(title = “Distribution of Sentiment Scores”, x = “Sentiment Score”,
+y = “Count”) + theme_minimal()</p>
+</div>
+<div id="convert-all-words-to-lowercase-to-ensure-consistency" class="section level1">
+<h1>Convert all words to lowercase to ensure consistency</h1>
+<p>word_freq<span class="math inline">\(negative_words &lt;-
+tolower(word_freq\)</span>negative_words)</p>
+</div>
+<div id="define-an-extended-list-of-custom-stop-words" class="section level1">
+<h1>Define an extended list of custom stop words</h1>
+<p>custom_stopwords &lt;- c(“phone”, “this”, “that”, “with”, “have”,
+“very”, “they”, “from”, “iphone”, “amazon”, “only”, “product”, “even”,
+“will”, “bought”, “just”, “apple”, “when”, “time”, “after”, “also”,
+“there”, “than”)</p>
+</div>
+<div id="filter-out-custom-stop-words-from-word-frequency-data" class="section level1">
+<h1>Filter out custom stop words from word frequency data</h1>
+<p>word_freq_filtered &lt;- word_freq %&gt;% filter(!(negative_words
+%in% custom_stopwords)) %&gt;% arrange(desc(Freq))</p>
+</div>
+<div id="display-the-top-10-refined-words-to-identify-potential-themes-after-further-refinement" class="section level1">
+<h1>Display the top 10 refined words to identify potential themes after
+further refinement</h1>
+<p>head(word_freq_filtered, 10)</p>
+</div>
+<div id="word-cloud-for-the-refined-frequent-words" class="section level1">
+<h1>Word cloud for the refined frequent words</h1>
+<p>install.packages(“wordcloud”) library(wordcloud)</p>
+<p>wordcloud(words = word_freq_filtered<span class="math inline">\(negative_words, freq =
+word_freq_filtered\)</span>Freq, max.words = 50, colors = brewer.pal(8,
+“Set2”))</p>
+</div>
+<div id="filter-the-data-to-include-only-the-top-specific-complaints" class="section level1">
+<h1>Filter the data to include only the top specific complaints</h1>
+<p>top_issues &lt;- word_freq_filtered %&gt;% filter(negative_words %in%
+c(“battery”, “service”, “camera”, “screen”, “quality”))</p>
+</div>
+<div id="create-the-bar-chart" class="section level1">
+<h1>Create the bar chart</h1>
+<p>ggplot(top_issues, aes(x = reorder(negative_words, -Freq), y = Freq))
++ geom_bar(stat = “identity”, fill = “skyblue”, color = “darkblue”) +
+labs(title = “Frequency of Top Specific Complaints”, x = “Issue”, y =
+“Frequency”) + theme_minimal()</p>
+</div>
+<div id="calculate-average-sentiment-score-by-top-issue" class="section level1">
+<h1>Calculate average sentiment score by top issue</h1>
+<p>top_issues_sentiment &lt;- negative_reviews %&gt;%
+filter(grepl(“battery|service|camera|screen|quality”, CleanedText))
+%&gt;% mutate(Issue = ifelse(grepl(“battery”, CleanedText), “Battery”,
+ifelse(grepl(“service”, CleanedText), “Service”, ifelse(grepl(“camera”,
+CleanedText), “Camera”, ifelse(grepl(“screen”, CleanedText), “Screen”,
+“Quality”))))) %&gt;% group_by(Issue) %&gt;% summarise(Average_Sentiment
+= mean(SentimentScore))</p>
+</div>
+<div id="plot-the-average-sentiment-for-each-issue" class="section level1">
+<h1>Plot the average sentiment for each issue</h1>
+<p>ggplot(top_issues_sentiment, aes(x = Issue, y = Average_Sentiment)) +
+geom_bar(stat = “identity”, fill = “lightgreen”, color = “darkgreen”) +
+labs(title = “Average Sentiment Score by Top Issues”, x = “Issue”, y =
+“Average Sentiment Score”) + theme_minimal()</p>
+</div>
+<div id="count-frequency-of-top-issues-by-country" class="section level1">
+<h1>Count frequency of top issues by country</h1>
+<p>issues_by_country &lt;- negative_reviews %&gt;%
+filter(grepl(“battery|service|camera|screen|quality”, CleanedText))
+%&gt;% mutate(Issue = ifelse(grepl(“battery”, CleanedText), “Battery”,
+ifelse(grepl(“service”, CleanedText), “Service”, ifelse(grepl(“camera”,
+CleanedText), “Camera”, ifelse(grepl(“screen”, CleanedText), “Screen”,
+“Quality”))))) %&gt;% count(Country, Issue)</p>
+</div>
+<div id="plot-the-heatmap" class="section level1">
+<h1>Plot the heatmap</h1>
+<p>ggplot(issues_by_country, aes(x = Country, y = Issue, fill = n)) +
+geom_tile() + scale_fill_gradient(low = “white”, high = “red”) +
+labs(title = “Heatmap of Issue Mentions by Country”, x = “Country”, y =
+“Issue”, fill = “Count”) + theme_minimal()</p>
+</div>
 
 
 
